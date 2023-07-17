@@ -80,6 +80,10 @@ export default function Dashboard({uiComponent}) {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const user_role = localStorage.getItem('user_role');
+  const user_fname = localStorage.getItem('user_fname');
+  const user_lname = localStorage.getItem('user_lname');
+
+  const fullName = `${user_fname} ${user_lname}`;
 
   const handleLogoutClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -142,6 +146,7 @@ export default function Dashboard({uiComponent}) {
             >
               Baryon
             </Typography>
+            {fullName}
             <Box>
             <IconButton
               color="inherit"

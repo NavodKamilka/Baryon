@@ -52,8 +52,12 @@ export default function Login() {
             //console.log("RRR",response.data.user.user_role);
             const token = response.data.token;
             const user_role = response.data.user.user_role;
+            const user_fname = response.data.user.f_name;
+            const user_lname = response.data.user.l_name;
             localStorage.setItem('token', token);
             localStorage.setItem('user_role', user_role);
+            localStorage.setItem('user_fname', user_fname);
+            localStorage.setItem('user_lname', user_lname);
             if (user_role === 'admin') {
               window.location.href = '/admin';
             } else if (user_role === 'system-user') {

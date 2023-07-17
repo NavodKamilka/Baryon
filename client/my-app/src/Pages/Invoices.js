@@ -93,7 +93,7 @@ export default function Invoices() {
   };
 
   const handleUpdateInvoice = async () => {
-    console.log("Called12")
+    
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/system-user/updateInvoice/${selectedInvoice.invoice_no}`,
@@ -116,13 +116,42 @@ export default function Invoices() {
     }
   };
 
-  const handleEdit = (invoice) => {
+  const handleEdit = async  (invoice) => {
+    //console.log("Customer codes",invoice)
     setSelectedInvoice(invoice);
     setCustomerName(invoice.customer_name);
-    setItemCodes(invoice.item_codes);
-    setQtys(invoice.qtys);
+    try {
+      const response = await performAdditionalAction(invoice.invoice_no);
+      // console.log("Customer codes", response.line_items);
+      const extractedItemCodes = response.line_items.map((item) => item.item_code);
+      const extractedQtys = response.line_items.map((item) => item.qty);
+
+      setItemCodes(extractedItemCodes);
+      setQtys(extractedQtys)
+      
+    } catch (error) {
+      console.error("Error performing additional action:", error);
+    }
+
+    // setItemCodes(invoice.item_codes);
+    // setQtys(invoice.qtys);
     setOpenDialog(true);
   };
+
+  const performAdditionalAction = async (invoice_no) => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/system-user/getInvoiceById/${invoice_no}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data; // Return the response data
+      } catch (error) {
+          console.error('Error fetching invoices:', error);
+          throw error; 
+      }
+  };
+
 
   const handleAddItem = () => {
     setItemCodes((prevItemCodes) => [...prevItemCodes, '']);
@@ -256,6 +285,14 @@ export default function Invoices() {
             variant="contained"
             style={{ backgroundColor: 'green', color: 'white' }}
             onClick={selectedInvoice ? handleUpdateInvoice : handleAddInvoice}
+            // onClick={() => {
+            //   console.log('Selected Invoice:', selectedInvoice);
+            //   if (selectedInvoice) {
+            //     handleUpdateInvoice();
+            //   } else {
+            //     handleAddInvoice();
+            //   }
+            // }}
           >
             {selectedInvoice ? 'Update' : 'Add'}
           </Button>
